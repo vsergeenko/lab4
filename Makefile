@@ -4,13 +4,24 @@ MANS=sponge.1 vidir.1 vipe.1 isutf8.1 ts.1 combine.1 ifdata.1 ifne.1 pee.1 zrun.
 CFLAGS?=-O2 -g -Wall
 INSTALL_BIN?=install -s
 PREFIX?=/usr
+LIBDIR=/usr/local/lib
 
 DOCBOOK2XMAN=xsltproc --param man.authors.section.enabled 0 /usr/share/xml/docbook/stylesheet/docbook-xsl/manpages/docbook.xsl
 
-all: $(BINS) $(MANS)
+all: libpe-svn.so envx-svn $(BINS) $(MANS)
+
+# compile libs
+libpe-svn.o: libpe-svn.c
+	gcc -fPIC -c -o libpe-svn.o libpe-svn.c
+libpe-svn.so: libpe-svn.o
+	gcc -shared -o libpe-svn.so -Wall libpe-svn.o
+
+# compile programm
+envx-svn: envx-svn.o libpe-svn.so
+	gcc -Wall -o envx-svn envx-svn.o libpe-svn.so
 
 clean:
-	rm -f $(BINS) $(MANS) dump.c errnos.h errno.o
+	rm -f $(BINS) $(MANS) dump.c errnos.h errno.o *.o *.so
 
 install:
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -19,6 +30,9 @@ install:
 	
 	mkdir -p $(DESTDIR)$(PREFIX)/share/man/man1
 	install $(MANS) $(DESTDIR)$(PREFIX)/share/man/man1
+
+	install libpe-svn.so $(LIBDIR)/libpe-svn.so
+	ldconfig
 
 check: isutf8
 	./check-isutf8
