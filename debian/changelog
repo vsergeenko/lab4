@@ -1,3 +1,9 @@
+moreutils (0.58ubuntu1) precise; urgency=low
+
+  * Add ENVX
+
+ -- VadSer <vadser@live.spbstu.ru>  Sun, 06 Dec 2015 02:03:27 +0400
+
 moreutils (0.57) unstable; urgency=medium
 
   * Avoid using non-portable error() in ifdata, a portability reversion
